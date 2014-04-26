@@ -19,33 +19,41 @@ project
 
 unit-test construct
    : construct.cpp
+   : <testing.launcher>./run_boost_test
    ;
 
 unit-test value_basic
    : value_basic.cpp
+   : <testing.launcher>./run_boost_test
    ;
 
 unit-test value_array
    : value_array.cpp
+   : <testing.launcher>./run_boost_test
    ;
 
 unit-test value_object
    : value_object.cpp
+   : <testing.launcher>./run_boost_test
    ;
 
 unit-test value_non_container
    : value_non_container.cpp
+   : <testing.launcher>./run_boost_test
    ;
 
 unit-test get
    : get.cpp
+   : <testing.launcher>./run_boost_test
    ;
 
 unit-test get_as
    : get_as.cpp
+   : <testing.launcher>./run_boost_test
    ;
 
 unit-test parser_test
    : parser_test.cpp
+   : <testing.launcher>./run_boost_test
    ;
 

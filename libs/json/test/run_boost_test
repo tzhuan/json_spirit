@@ -1,0 +1,6 @@
+#!/bin/bash
+# Run Boost.Test executables and create JUnit flavored output
+#
+$1 --report_format=xml --report_level=detailed --log_level=test_suite --log_format=xml 2> $1.test.out
+xsltproc boost_test_to_junit.xls $1.test.out > $1.test.xml
+
