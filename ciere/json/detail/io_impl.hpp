@@ -136,6 +136,89 @@ namespace ciere { namespace json
 
          std::ostream& stream;
       };
+
+      class indentation {
+         public:
+            indentation(int i)
+               : indent(0), increment(i)
+            {
+            }
+
+            std::ostream& operator()(std::ostream& os) const
+            {
+               for (auto i = 0; i < indent; ++i)
+                  os << ' ';
+               return os;
+            }
+
+            indentation& operator++()
+            {
+               indent += increment;
+               return *this;
+            }
+
+            indentation& operator--()
+            {
+               indent -= increment;
+               return *this;
+            }
+
+         private:
+            int indent;
+            int increment;
+      };
+
+      inline std::ostream& operator<<(std::ostream& os, indentation& indent)
+      {
+         return indent(os);
+      }
+
+      struct pretty_printer : public printer
+      {
+         pretty_printer(std::ostream& s, int i = 2)
+            : printer(s), indent(i) {}
+
+         using printer::operator();
+         void operator()(object_t const & obj) const
+         {
+            stream << "{" << std::endl;
+            ++indent;
+            bool first = true;
+
+            BOOST_FOREACH( object_t::value_type const & v, obj )
+            {
+               if( first ) { first = false;  }
+               else        { stream << "," << std::endl; }
+
+               stream << indent << '"' << v.first << "\": ";
+               boost::apply_visitor( *this,v.second);
+            }
+
+            --indent;
+            stream << std::endl << indent << "}";
+         }
+
+         void operator()(array_t const & arr) const
+         {
+            stream << "[" << std::endl;
+            ++indent;
+            bool first = true;
+
+            BOOST_FOREACH( value const & v, arr )
+            {
+               if( first ) { first = false;  }
+               else        { stream << ", " << std::endl; }
+
+               indent(stream);
+               boost::apply_visitor(*this,v);
+            }
+            --indent;
+            stream << std::endl << indent << "]";
+         }
+
+         private:
+            mutable indentation indent;
+      };
    }
 
    inline std::ostream & operator<<(std::ostream & stream, null_t)
@@ -146,7 +229,11 @@ namespace ciere { namespace json
 
    inline std::ostream & operator<<(std::ostream & stream, value const & v)
    {
+#ifdef JSON_SPIRIT_USE_PRETTY_PRINTER
+      boost::apply_visitor(detail::pretty_printer(stream),v);
+#else
       boost::apply_visitor(detail::printer(stream),v);
+#endif
       return stream;
    }
 
