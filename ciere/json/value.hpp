@@ -285,6 +285,19 @@ namespace ciere { namespace json
          // template can be ambigous for some types ... lets get specific
          value & set(string_t const & name, char const * v);
 
+         template<typename T>
+         value get(string_t const & name, T value) const
+         {
+            if (has_key(name))
+               return (*this)[name].get_as<T>();
+            return value;
+         }
+
+         string_t get(string_t const & name, const char* value) const
+         {
+            return get(name, string_t(value));
+         }
+
          /**
           *  Functor style setting. The first value is the name of the member to add.
           *  the second value is the value to be set.
