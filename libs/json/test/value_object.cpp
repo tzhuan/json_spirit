@@ -73,6 +73,9 @@ BOOST_AUTO_TEST_CASE(all)
    value.set("cafe", "open");
    BOOST_CHECK_EQUAL(value["cafe"], "open");
 
+   BOOST_CHECK_EQUAL(value.get("cafe", "close"), "open");
+   BOOST_CHECK_EQUAL(value.get("others", 3.14), 3.14);
+
    const_test_f(value);
 }
 
